@@ -6,24 +6,33 @@ import project.plant_hierarchy.plant.Vegetable;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Basket {
 
-    private ArrayList<Plant> plantBasket = new ArrayList<>(); // Контейнер с содержимым корзины
+    private Plant[] basketContent = {}; // Контейнер с содержимым корзины
 
-    public ArrayList<Plant> getPlantBasket() {
-        return plantBasket;
+    public Plant[] getBasketContent(){
+        return basketContent;
     }
+
+    private final Plant[] EMPTY_PLANTBASKET = {};
 
     // Добавление массива растений в корзину
     public void put(Plant[] plants){
 
         if (plants != null) {
-            for (int i = 0; i < plants.length; i++) {
-                plantBasket.add(plants[i]);
+
+            Plant[] tempArray = new Plant[basketContent.length + plants.length];
+
+            for (int i = 0; i < basketContent.length; i++) {
+                tempArray[i] = basketContent[i];
             }
+
+            for (int i = 0; i < plants.length; i++){
+                tempArray[basketContent.length + i] = plants[i];
+            }
+
+            basketContent = tempArray;
         }
     }
 
@@ -31,54 +40,108 @@ public class Basket {
     public void put(Basket basket){
 
         if (basket != null) {
-            this.plantBasket.addAll(basket.plantBasket);
+            this.put(basket.basketContent);
+        }
+    }
+
+    public void put(Plant plant){
+
+        if (plant != null){
+
+            Plant[] tempArray = new Plant[basketContent.length + 1];
+
+            for (int i = 0; i < basketContent.length; i++){
+                tempArray[i] = basketContent[i];
+            }
+
+            tempArray[basketContent.length] = plant;
+            basketContent = tempArray;
         }
     }
 
     // Извлечение растения из корзины
     public Plant extract(int index) {
 
-        Plant temp = plantBasket.get(index);
-        plantBasket.remove(index);
-        return temp;
+        if (index >= 0) {
+
+            Plant temp = basketContent[index];
+            Plant[] tempArray = new Plant[basketContent.length - 1];
+
+            for (int i = 0; i < index; i++){
+                tempArray[i] = basketContent[i];
+            }
+
+            for (int i = index + 1; i < basketContent.length; i++){
+                tempArray[i - 1] = basketContent[i];
+            }
+
+            basketContent = tempArray;
+            return temp;
+        } else return null;
     }
 
     // Извлечение содержимого корзины с удалением в виде массива растений
     public Plant[] extractAll() {
 
-        Plant[] tempArray = (Plant[]) plantBasket.toArray();
-        plantBasket.clear();
+        Plant[] tempArray = basketContent;
+        basketContent = EMPTY_PLANTBASKET;
         return tempArray;
     }
 
     // Извлечение всех фруктов с удалением, содержащихся в корзине, в виде массива фруктов
     public Fruit[] extractAllFruits() {
 
-        List<Plant> tempList = new ArrayList<>();
-        for (Plant i : plantBasket){
-            if (i instanceof Fruit) {
-                tempList.add(i);
+        int fruitCount = 0;
+        for (int i = 0; i < basketContent.length; i++){
+            if (basketContent[i] instanceof Fruit){
+                fruitCount++;
             }
         }
-        plantBasket.removeAll(tempList);
-        Fruit[] resultArray = new Fruit[tempList.size()];
-        resultArray = tempList.toArray(resultArray);
-        return  resultArray;
+
+        Fruit[] resultFruitArray = new Fruit[fruitCount];
+        Plant[] tempResultArray = new Plant[basketContent.length - fruitCount];
+
+        int j = 0, k = 0;
+        for (int i = 0; i < basketContent.length; i++){
+            if (basketContent[i] instanceof Fruit){
+                resultFruitArray[j] = (Fruit) basketContent[i];
+                j++;
+            } else {
+                tempResultArray[k] = basketContent[i];
+                k++;
+            }
+        }
+
+        basketContent = tempResultArray;
+        return resultFruitArray;
     }
 
     // Извлечение всех овощей с удалением, содержащихся в корзине, в виде массива овощей
     public Vegetable[] extractAllVegetables() {
 
-        List<Plant> tempList = new ArrayList<>();
-        for (Plant i : plantBasket){
-            if (i instanceof Vegetable) {
-                tempList.add(i);
+        int vegetableCount = 0;
+        for (int i = 0; i < basketContent.length; i++){
+            if (basketContent[i] instanceof Vegetable){
+                vegetableCount++;
             }
         }
-        plantBasket.removeAll(tempList);
-        Vegetable[] resultArray = new Vegetable[tempList.size()];
-        resultArray = tempList.toArray(resultArray);
-        return  resultArray;
+
+        Vegetable[] resultVegetableArray = new Vegetable[vegetableCount];
+        Plant[] tempResultArray = new Plant[basketContent.length - vegetableCount];
+
+        int j = 0, k = 0;
+        for (int i = 0; i < basketContent.length; i++){
+            if (basketContent[i] instanceof Vegetable){
+                resultVegetableArray[j] = (Vegetable) basketContent[i];
+                j++;
+            } else {
+                tempResultArray[k] = basketContent[i];
+                k++;
+            }
+        }
+
+        basketContent = tempResultArray;
+        return resultVegetableArray;
     }
 
     // Вес содержимого корзины
@@ -86,7 +149,7 @@ public class Basket {
 
         BigDecimal sumWeight = new BigDecimal(0.0);
 
-        for (Plant i : plantBasket){
+        for (Plant i : basketContent){
             sumWeight = sumWeight.add(i.getWeight());
         }
         return sumWeight.round(MathContext.DECIMAL32);
@@ -97,7 +160,7 @@ public class Basket {
 
         BigDecimal sumWeight = new BigDecimal(0.0);
 
-        for (Plant i : plantBasket){
+        for (Plant i : basketContent){
             if (i instanceof Fruit) {
                 sumWeight = sumWeight.add(i.getWeight());
             }
@@ -110,7 +173,7 @@ public class Basket {
 
         BigDecimal sumWeight = new BigDecimal(0.0);
 
-        for (Plant i : plantBasket){
+        for (Plant i : basketContent){
             if (i instanceof Vegetable) {
                 sumWeight = sumWeight.add(i.getWeight());
             }
@@ -120,7 +183,7 @@ public class Basket {
 
     // Вывод инф-ции о содержимом корзины
     public void printContent() {
-        for (Plant temp : plantBasket){
+        for (Plant temp : basketContent){
             System.out.println(temp);
         }
     }

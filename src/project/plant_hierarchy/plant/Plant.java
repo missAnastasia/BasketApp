@@ -7,10 +7,10 @@ import java.math.MathContext;
 
 public abstract class Plant implements Peelable {
 
-    protected BigDecimal weight; // Вес растения
-    protected String color; // Цвет растения
-    protected Ripeness ripeness; // Зрелость
-    protected boolean peeled; // Очищен
+    protected BigDecimal weight; // Weight of plant
+    protected String color; // Color of plant
+    protected Ripeness ripeness; // Ripeness of plant
+    protected boolean peeled; // Is plant peeled or unpeeled
 
     public Plant(BigDecimal weight, String color, Ripeness ripeness, boolean peeled) {
         this.weight = weight;

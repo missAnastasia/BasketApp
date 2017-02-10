@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 public class FoodProcessor implements Peeler, Cutter, Slicer {
 
-    // Очистка одного растения, возвращает вес растения после очистки
+    // Peeling of single plant. Returns weight of peeled plant
     @Override
     public BigDecimal peelItem(Plant plant) {
 
@@ -26,7 +26,7 @@ public class FoodProcessor implements Peeler, Cutter, Slicer {
             return new BigDecimal(0.0);
     }
 
-    // Очистка массива растений, возвращает суммарный вес растений после очистки
+    // Peeling of array of plants. Returns summary weight of peeled plants
     @Override
     public BigDecimal peelItems(Plant[] plants) {
 
@@ -47,8 +47,8 @@ public class FoodProcessor implements Peeler, Cutter, Slicer {
         return summaryWeight;
     }
 
-    // Шинковка одного овоща, возвращает вес овоща после шинковки
-    // Если овощ не очищен, то IllegalArgumentException
+    // Cutting of single vegetable. Returns weight of cuted vegetable
+    // If plant is unpeeled, throws IllegalArgumentException
     @Override
     public BigDecimal cut(Vegetable vegetable) {
 
@@ -65,8 +65,8 @@ public class FoodProcessor implements Peeler, Cutter, Slicer {
             return new BigDecimal(0.0);
     }
 
-    // Шинковка массива овощей, возвращает суммарный вес овощей после шинковки
-    // Если овощ не очищен, то IllegalArgumentException
+    // Cutting of array of vegetables. Returns summary weight of cuted plants
+    // If any plant is unpeeled, throws IllegalArgumentException
     @Override
     public BigDecimal cutAll(Vegetable[] vegetables) {
 
@@ -88,8 +88,8 @@ public class FoodProcessor implements Peeler, Cutter, Slicer {
         return summaryWeight;
     }
 
-    // Нарезка одного растения, возвращает вес растения после нарезки
-    // Если растение не очищено, то IllegalArgumentException
+    // Slicing of single plant. Returns weight of sliced plant
+    // If plant is unpeeled, throws IllegalArgumentException
     @Override
     public BigDecimal slice(Plant plant) {
 
@@ -99,14 +99,15 @@ public class FoodProcessor implements Peeler, Cutter, Slicer {
                         .subtract(plant.getWeight()
                                 .multiply(new BigDecimal(0.02))));
                 return plant.getWeight();
-            } else
+            } else {
                 throw new IllegalArgumentException("UNPEELED PLANT!");
+            }
         } else
             return new BigDecimal(0.0);
     }
 
-    // Нарезка массива растений, возвращает суммарный вес растений после нарезки
-    // Если растение не очищено, то IllegalArgumentException
+    // Slicing of array of plants. Returns summary weight of sliced plants
+    // If any plant is unpeeled, throws IllegalArgumentException
     @Override
     public BigDecimal sliceAll(Plant[] plants) {
 
